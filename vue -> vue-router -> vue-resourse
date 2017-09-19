@@ -1,0 +1,135 @@
+//firstcomponent.vue-----------------------------------------------
+<template>
+  <div id="firstcomponent">
+    <h1>first</h1>
+  </div>
+</template>
+
+<script type="text/javascript">
+export default {
+  data () {
+    return {
+    }
+  }
+}
+</script>
+
+<style>
+</style>
+
+//secondcomponent.vue------------------------------------------------
+<template>
+  <div id="secondcomponent">
+    <h1>second</h1>
+    <ul>
+      <li v-for="article in articles">
+        {{article.title}}
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      articles: []
+    }
+  },
+  mounted: function () {
+    this.$http.jsonp('https://api.douban.com/v2/movie/top250?count=10', {}, {
+      headers: {
+
+      },
+      emulateJson: true
+    }).then(function (response) {
+      this.articles = response.data.subjects
+              // this.articles = response.data["subjects"] 也可以
+    }, function (response) {
+      console.log(response)
+    })
+  }
+}
+</script>
+
+<style>
+</style>
+
+//App.vue-------------------------------------------------------------
+<template>
+  <div>
+    <img src="./assets/logo.png">
+    <h1>{{ msg }}</h1>
+    <ul>
+      <li><router-link to="/first">first</router-link></li>
+      <li><router-link to="/second">second</router-link></li>
+    </ul>
+    <router-view class="view"></router-view>
+  </div>
+</template>
+
+<script>
+
+export default {
+  data () {
+    return {
+      msg: 'Hello Vue!'
+    }
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
+
+/*main.js-----------------------------------------------------------
+// The Vue build version to load with the `import` command
+// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import Vue from 'vue'
+import App from './App.vue'
+import Router from 'vue-router'
+import VueResource from 'vue-resource'
+
+Vue.config.productionTip = true
+
+Vue.use(VueResource)
+Vue.use(Router)
+
+import firstcomponent from './component/firstcomponent.vue'
+import secondcomponent from './component/secondcomponent.vue'
+
+const route = new Router({
+  mode: 'history',
+  base: __dirname,
+  routes: [
+    {
+      path: '/first',
+      component: firstcomponent
+    },
+    {
+      path: '/second',
+      component: secondcomponent
+    }
+  ]
+})
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router: route,
+  render: h => h(App)
+})
+
+// const app = new Vue({
+//   router: route,
+//   render: h => h(App)
+// }).$mount('#app')
+
